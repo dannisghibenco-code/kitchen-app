@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что готовим</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EC;
+    --paper-raised:#FFFFFF;
+    --ink:#2B2A26;
+    --ink-soft:#63605A;
+    --line:#E4DCC9;
+    --sage:#4B6355;
+    --sage-deep:#374A3F;
+    --sage-tint:#E7EDE7;
+    --mustard:#D3A03D;
+    --mustard-tint:#FBF0D9;
+    --brick:#B14B36;
+    --brick-tint:#F6E4DF;
+    --radius:14px;
+    --radius-sm:8px;
+    --shadow: 0 1px 0 rgba(43,42,38,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--sage-deep); outline-offset:2px;}
+  button, input, textarea, select{font-size:16px;}
+  input, textarea, select{
+    font-family:'Manrope',sans-serif;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    border-radius:var(--radius-sm);
+    padding:10px 12px;
+    color:var(--ink);
+    width:100%;
+  }
+  textarea{resize:none; min-height:70px; overflow:hidden;}
+  label{font-size:13px;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:6px;}
+  .field{margin-bottom:16px;}
+
+  #app{
+    max-width:560px;
+    margin:0 auto;
+    min-height:100%;
+    position:relative;
+    padding-bottom:40px;
+  }
+
+  /* ---- top bar ---- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:18px 18px 14px;
+    position:sticky;
+    top:0;
+    background:linear-gradient(var(--paper) 80%, transparent);
+    z-index:5;
+  }
+  .back-btn{
+    background:none;
+    border:none;
+    color:var(--ink);
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+    padding:6px 8px 6px 0;
+    border-radius:var(--radius-sm);
+  }
+  .back-btn:hover{color:var(--sage-deep);}
+  .topbar h1{
+    margin:0;
+    font-size:21px;
+    font-weight:600;
+    flex:1;
+  }
+  .top-action{
+    background:none;
+    border:none;
+    color:var(--sage-deep);
+    font-weight:700;
+    cursor:pointer;
+    font-size:15px;
+    padding:6px;
+  }
+
+  .screen{
+    padding:4px 18px 24px;
+    animation:slideIn .22s ease;
+  }
+  @keyframes slideIn{
+    from{opacity:0; transform:translateX(14px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen{animation:none;}
+  }
+
+  /* ---- home nav row ---- */
+  .home-nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:0 18px 6px;
+    margin-bottom:6px;
+  }
+  .home-nav button{
+    flex:0 0 auto;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:999px;
+    color:var(--ink);
+    cursor:pointer;
+    font-weight:600;
+    font-size:14px;
+    white-space:nowrap;
+  }
+  .home-nav button:hover{border-color:var(--sage);}
+
+  .date-line{
+    color:var(--ink-soft);
+    font-size:14px;
+    margin:2px 0 18px;
+  }
+
+  /* ---- slot card (today) ---- */
+  .slot-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .slot-card.is-override{border-color:var(--mustard);}
+  .slot-label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--sage-deep);
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:6px;
+  }
+  .slot-override-tag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    color:var(--mustard);
+    background:var(--mustard-tint);
+    padding:2px 8px;
+    border-radius:999px;
+    margin-left:8px;
+    text-transform:none;
+    letter-spacing:0;
+    vertical-align:middle;
+  }
+  .slot-dish-name{
+    font-size:22px;
+    font-weight:600;
+    margin:2px 0 10px;
+  }
+  .slot-meta{
+    color:var(--ink-soft);
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  .slot-empty{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:4px 0 14px;
+  }
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn{
+    border:none;
+    border-radius:var(--radius-sm);
+    padding:10px 14px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--sage-deep); color:#fff;}
+  .btn-primary:hover{background:var(--sage);}
+  .btn-ghost{background:var(--sage-tint); color:var(--sage-deep);}
+  .btn-ghost:hover{background:#dce6dd;}
+  .btn-outline{background:none; border:1px solid var(--line); color:var(--ink);}
+  .btn-outline:hover{border-color:var(--sage);}
+  .btn-danger{background:none; color:var(--brick); border:1px solid var(--brick-tint);}
+  .btn-danger:hover{background:var(--brick-tint);}
+  .btn-full{width:100%;}
+  .btn-sm{padding:7px 11px; font-size:13px;}
+
+  .slot-toggle-row{
+    display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;
+  }
+  .slot-toggle{
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    padding:7px 13px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .slot-toggle.active{
+    background:var(--sage-deep);
+    border-color:var(--sage-deep);
+    color:#fff;
+  }
+
+  /* ---- dish list ---- */
+  .search-row{margin-bottom:14px;}
+  .dish-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+    cursor:pointer;
+  }
+  .dish-item:hover{border-color:var(--sage);}
+  .dish-item-main{min-width:0;}
+  .dish-item-name{font-weight:600; font-size:16px; margin-bottom:3px;}
+  .dish-item-meta{font-size:12.5px; color:var(--ink-soft);}
+  .chip{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    background:var(--sage-tint);
+    color:var(--sage-deep);
+    margin-right:6px;
+  }
+  .chevron{color:var(--ink-soft); font-size:18px; flex:0 0 auto;}
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+  }
+  .empty-state .serif{font-size:19px; color:var(--ink); margin-bottom:6px;}
+
+  /* ---- dish detail ---- */
+  .dish-title{font-size:26px; font-weight:600; margin:0 0 6px;}
+  .dish-tags{margin-bottom:18px;}
+  .section-block{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .section-title{
+    font-size:13px;
+    font-weight:700;
+    color:var(--sage-deep);
+    margin-bottom:8px;
+  }
+  .about-text{white-space:pre-wrap; line-height:1.5; font-size:15px;}
+  .placeholder-text{color:var(--ink-soft); font-style:italic; font-size:14px;}
+  ul.ingredient-list{margin:0; padding-left:20px;}
+  ul.ingredient-list li{margin-bottom:4px; font-size:15px;}
+  .edit-link{background:none;border:none;color:var(--sage-deep);font-weight:700;font-size:13px;cursor:pointer;padding:0;margin-top:8px;}
+
+  /* ---- history list ---- */
+  .history-entry{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+    cursor:pointer;
+  }
+  .history-entry:hover{border-color:var(--sage);}
+  .history-entry.pinned{border-color:var(--mustard); background:var(--mustard-tint);}
+  .history-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+  .history-date{font-weight:700; font-size:14px;}
+  .history-rating{font-size:13px; color:var(--mustard); font-weight:700;}
+  .history-preview{font-size:13.5px; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .pin-star{margin-right:6px;}
+
+  /* ---- forms ---- */
+  .ingredient-row{display:flex; gap:8px; margin-bottom:8px;}
+  .ingredient-row input{flex:1;}
+  .remove-x{
+    background:none;border:1px solid var(--line);border-radius:var(--radius-sm);
+    width:38px; color:var(--brick); cursor:pointer; font-weight:700;
+  }
+  .add-line-btn{
+    background:none; border:1px dashed var(--line); border-radius:var(--radius-sm);
+    padding:8px 12px; color:var(--sage-deep); font-weight:700; cursor:pointer; font-size:13.5px;
+    width:100%;
+  }
+
+  /* ---- calendar ---- */
+  .cal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .cal-nav-btn{background:none; border:1px solid var(--line); border-radius:var(--radius-sm); width:34px; height:34px; cursor:pointer; font-size:16px;}
+  .cal-month-label{font-weight:700; font-size:16px; font-family:'Fraunces',serif;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .cal-dow{text-align:center; font-size:11px; color:var(--ink-soft); font-weight:700; padding-bottom:4px;}
+  .cal-day{
+    aspect-ratio:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border-radius:var(--radius-sm);
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    cursor:pointer;
+    font-size:13px;
+    position:relative;
+  }
+  .cal-day.empty{visibility:hidden; cursor:default;}
+  .cal-day.today{border-color:var(--sage-deep); border-width:2px;}
+  .cal-day.has-plan::after{
+    content:'';
+    width:5px;height:5px;border-radius:50%;
+    background:var(--mustard);
+    position:absolute; bottom:5px;
+  }
+  .cal-day:hover{border-color:var(--sage);}
+
+  .day-slot-block{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+  }
+  .day-slot-title{font-weight:700; font-size:14px; margin-bottom:8px; color:var(--sage-deep);}
+
+  /* ---- shopping list ---- */
+  .shop-item{
+    display:flex; align-items:center; gap:12px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:12px 14px;
+    margin-bottom:8px;
+  }
+  .shop-item input[type=checkbox]{width:20px; height:20px; flex:0 0 auto;}
+  .shop-item.checked .shop-text{text-decoration:line-through; color:var(--ink-soft);}
+  .shop-text{flex:1; font-size:15px;}
+  .shop-del{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:16px;}
+  .shop-add-row{display:flex; gap:8px; margin:14px 0;}
+  .shop-add-row input{flex:1;}
+
+  /* ---- picker modal ---- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(43,42,38,0.45);
+    display:flex; align-items:flex-end; justify-content:center;
+    z-index:50;
+  }
+  .sheet{
+    background:var(--paper);
+    width:100%; max-width:560px;
+    border-radius:20px 20px 0 0;
+    padding:20px 18px 28px;
+    max-height:80vh;
+    overflow-y:auto;
+    animation:sheetUp .2s ease;
+  }
+  @keyframes sheetUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .sheet h3{margin:0 0 14px;}
+  .sheet-close{float:right; background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft);}
+  .pick-item{
+    padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius-sm);
+    margin-bottom:8px; cursor:pointer; font-weight:600;
+  }
+  .pick-item:hover{border-color:var(--sage);}
+
+  .confirm-box{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:14px;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  .settings-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .settings-row:last-child{border-bottom:none;}
+  .hint{font-size:12.5px; color:var(--ink-soft); margin-top:-4px; margin-bottom:14px;}
+  input[type=file]{display:none;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================= STATE ============================= */
+const STORAGE_KEY = 'kitchenApp_v1';
+const SLOT_LABELS = { breakfast:'Завтрак', lunch:'Обед', dinner:'Ужин' };
+const SLOT_ORDER = ['breakfast','lunch','dinner'];
+const MEAL_LABELS = { breakfast:'Завтрак', lunch:'Обед', dinner:'Ужин', any:'Любой приём пищи' };
+
+function defaultState(){
+  return {
+    dishes: [],
+    activeBatches: { breakfast:null, lunch:null, dinner:null }, // {dishId, startDate}
+    calendarOverrides: {}, // { 'YYYY-MM-DD': { breakfast: dishId, ... } }
+    dailySlots: {}, // { 'YYYY-MM-DD': ['breakfast','dinner'] }  per-day active slot override
+    shoppingList: [], // { id, text, checked, source, dishId }
+    settings: { activeSlots: ['breakfast','dinner'] }
+  };
+}
+
+let state = load();
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  }catch(e){ return defaultState(); }
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function todayStr(){ return dateStr(new Date()); }
+function dateStr(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function formatDateHuman(str){
+  const [y,m,d] = str.split('-').map(Number);
+  const dt = new Date(y,m-1,d);
+  return dt.toLocaleDateString('ru-RU',{ day:'numeric', month:'long', weekday:'long' });
+}
+function getDish(id){ return state.dishes.find(d=>d.id===id); }
+
+/* ---- rotation helpers: longer-since-cooked dishes surface higher ---- */
+function getLastCooked(dish){
+  const today = todayStr();
+  const c = [];
+  if(dish.lastFinishedDate) c.push(dish.lastFinishedDate);
+  (dish.history||[]).forEach(h=>{ if(h.date && h.date<=today) c.push(h.date); });
+  if(SLOT_ORDER.some(s=>state.activeBatches[s]?.dishId===dish.id)) c.push(today);
+  Object.entries(state.calendarOverrides).forEach(([d,slots])=>{
+    if(d<=today && Object.values(slots).includes(dish.id)) c.push(d);
+  });
+  return c.length ? c.sort().pop() : null;
+}
+function daysSinceCooked(dish){
+  const last = getLastCooked(dish);
+  if(!last) return Infinity;
+  const [y,m,d] = last.split('-').map(Number);
+  const dt = new Date(y,m-1,d); dt.setHours(0,0,0,0);
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((now-dt)/(1000*60*60*24));
+}
+function recencyLabel(dish){
+  const days = daysSinceCooked(dish);
+  if(days===Infinity) return 'ещё не готовили';
+  if(days===0) return 'готовили сегодня';
+  if(days===1) return 'готовили вчера';
+  if(days<5) return `готовили ${days} дня назад`;
+  return `готовили ${days} дн. назад`;
+}
+function rotationSort(list){
+  return list.slice().sort((a,b)=> daysSinceCooked(b) - daysSinceCooked(a));
+}
+function markFinished(dishId){
+  const dish = getDish(dishId);
+  if(dish) dish.lastFinishedDate = todayStr();
+}
+
+/* ============================= NAV STACK ============================= */
+let nav = [{ screen:'today' }];
+
+function push(screen, params){ nav.push({screen, params}); render(); window.scrollTo(0,0); }
+function replace(screen, params){ nav[nav.length-1] = {screen, params}; render(); window.scrollTo(0,0);}
+function pop(){ if(nav.length>1){ nav.pop(); render(); window.scrollTo(0,0);} }
+function goHome(){ nav = [{screen:'today'}]; render(); window.scrollTo(0,0); }
+
+/* ============================= RENDER ROOT ============================= */
+function render(){
+  const cur = nav[nav.length-1];
+  const app = document.getElementById('app');
+  const titles = {
+    today:'Что готовим', dishes:'Блюда', dish:'Блюдо', history:'История попыток',
+    note:'Заметка', calendar:'Календарь', day:'День', shopping:'Список покупок', settings:'Настройки'
+  };
+  const showBack = nav.length>1;
+  app.innerHTML = `
+    <div class="topbar">
+      ${showBack ? `<button class="back-btn" aria-label="Назад" onclick="pop()">←</button>` : ''}
+      <h1>${titles[cur.screen] || ''}</h1>
+      ${topAction(cur)}
+    </div>
+    <div class="screen">${renderScreen(cur)}</div>
+  `;
+  attachScreenHandlers(cur);
+  if(cur.screen==='settings') updatePersistStatus();
+}
+
+function topAction(cur){
+  if(cur.screen==='dishes') return `<button class="top-action" onclick="openDishEditor()">+ Блюдо</button>`;
+  if(cur.screen==='dish') return `<button class="top-action" onclick="openDishEditor('${cur.params.id}')">Изменить</button>`;
+  if(cur.screen==='history') return `<button class="top-action" onclick="openNoteEditor('${cur.params.dishId}')">+ Запись</button>`;
+  if(cur.screen==='note') return `<button class="top-action" onclick="openNoteEditor('${cur.params.dishId}','${cur.params.noteId}')">Изменить</button>`;
+  return '';
+}
+
+function renderScreen(cur){
+  switch(cur.screen){
+    case 'today': return screenToday();
+    case 'dishes': return screenDishes();
+    case 'dish': return screenDishDetail(cur.params.id);
+    case 'history': return screenHistory(cur.params.dishId);
+    case 'note': return screenNote(cur.params.dishId, cur.params.noteId);
+    case 'calendar': return screenCalendar(cur.params);
+    case 'day': return screenDay(cur.params.date);
+    case 'shopping': return screenShopping();
+    case 'settings': return screenSettings();
+    default: return '';
+  }
+}
+
+/* ============================= TODAY SCREEN ============================= */
+function getActiveSlotsForDate(dstr){
+  if(state.dailySlots[dstr]) return state.dailySlots[dstr];
+  return state.settings.activeSlots;
+}
+function toggleDaySlot(dstr, slot){
+  const current = getActiveSlotsForDate(dstr).slice();
+  const idx = current.indexOf(slot);
+  if(idx>=0) current.splice(idx,1); else current.push(slot);
+  state.dailySlots[dstr] = current;
+  save(); render();
+}
+
+function screenToday(){
+  const dstr = todayStr();
+  const activeSlots = getActiveSlotsForDate(dstr);
+  const homeNav = `
+    <div class="home-nav">
+      <button onclick="push('dishes')">🍽 Блюда</button>
+      <button onclick="push('calendar')">📅 Календарь</button>
+      <button onclick="push('shopping')">🛒 Покупки</button>
+      <button onclick="push('settings')">⚙️ Настройки</button>
+    </div>`;
+  const dateLine = `<div class="date-line">${formatDateHuman(dstr)}</div>`;
+
+  const toggles = `
+    <div class="slot-toggle-row">
+      ${SLOT_ORDER.map(s=>`
+        <button class="slot-toggle ${activeSlots.includes(s)?'active':''}" onclick="toggleDaySlot('${dstr}','${s}')">${SLOT_LABELS[s]}</button>
+      `).join('')}
+    </div>`;
+
+  const reminder = exportReminderBanner();
+
+  if(activeSlots.length===0){
+    return homeNav + reminder + dateLine + toggles + `
+      <div class="empty-state">
+        <div class="serif">Сегодня без приёмов пищи?</div>
+        <div>Отметьте выше, что планируете есть сегодня.</div>
+      </div>`;
+  }
+
+  const cards = activeSlots.map(slot=>{
+    const override = state.calendarOverrides[dstr]?.[slot];
+    if(override){
+      const dish = getDish(override);
+      if(!dish) return slotEmptyCard(slot, dstr, true);
+      return `
+        <div class="slot-card is-override">
+          <div class="slot-label">${SLOT_LABELS[slot]} <span class="slot-override-tag">по календарю</span></div>
+          <div class="slot-dish-name">${escapeHtml(dish.name)}</div>
+          ${dish.cookTime ? `<div class="slot-meta">⏱ ${dish.cookTime} мин</div>`:''}
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="openDish('${dish.id}')">Открыть блюдо</button>
+            <button class="btn btn-outline" onclick="push('day',{date:'${dstr}'})">Изменить план</button>
+          </div>
+        </div>`;
+    }
+    const batch = state.activeBatches[slot];
+    if(batch && getDish(batch.dishId)){
+      const dish = getDish(batch.dishId);
+      return `
+        <div class="slot-card">
+          <div class="slot-label">${SLOT_LABELS[slot]}</div>
+          <div class="slot-dish-name">${escapeHtml(dish.name)}</div>
+          <div class="slot-meta">Готовите с ${formatShortDate(batch.startDate)}${dish.cookTime ? ` · ⏱ ${dish.cookTime} мин`:''}</div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="finishBatch('${slot}')">Готово, что дальше?</button>
+            <button class="btn btn-ghost" onclick="openPicker('${slot}', null, false)">Заменить</button>
+            <button class="btn btn-outline" onclick="clearBatch('${slot}')">Убрать</button>
+          </div>
+        </div>`;
+    }
+    return slotEmptyCard(slot, dstr, false);
+  }).join('');
+
+  return homeNav + reminder + dateLine + toggles + cards;
+}
+
+function slotEmptyCard(slot, dstr, wasOverrideMissing){
+  return `
+    <div class="slot-card">
+      <div class="slot-label">${SLOT_LABELS[slot]}</div>
+      <div class="slot-empty">Блюдо ещё не выбрано.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openPicker('${slot}', null, false)">Выбрать блюдо</button>
+      </div>
+    </div>`;
+}
+
+function formatShortDate(str){
+  const [y,m,d] = str.split('-').map(Number);
+  return `${d}.${String(m).padStart(2,'0')}`;
+}
+
+function finishBatch(slot){
+  const batch = state.activeBatches[slot];
+  if(!batch) return;
+  const dish = getDish(batch.dishId);
+  pendingFinish = { slot, dish };
+  if(dish){
+    showConfirmSheet(
+      `«${escapeHtml(dish.name)}» — готово?`,
+      'Можно оставить заметку об этом приготовлении, прежде чем выбрать следующее блюдо.',
+      [
+        { label:'Добавить заметку', cls:'btn-primary', action:()=>{ markFinished(dish.id); save(); closeSheet(); openNoteEditor(dish.id, null, {afterSave: ()=>openPicker(slot, batch.dishId, true)}); } },
+        { label:'Пропустить', cls:'btn-outline', action:()=>{ markFinished(dish.id); save(); closeSheet(); openPicker(slot, batch.dishId, true); } }
+      ]
+    );
+  } else {
+    openPicker(slot, null, true);
+  }
+}
+
+/* ============================= PICKER (choose dish for a slot) ============================= */
+function openPicker(slot, excludeDishId, isReplacement){
+  const pool = rotationSort(state.dishes.filter(d => d.mealType==='any' || d.mealType===slot));
+  const otherSlots = getActiveSlotsForDate(todayStr()).filter(s=>s!==slot);
+  const extraSlotsHtml = otherSlots.length ? `
+    <div class="field">
+      <label>Заодно поставить и на:</label>
+      <div class="slot-toggle-row" id="picker-extra-slots">
+        ${otherSlots.map(s=>`<button type="button" class="slot-toggle" data-slot="${s}" onclick="this.classList.toggle('active')">${SLOT_LABELS[s]}</button>`).join('')}
+      </div>
+    </div>` : '';
+  const listHtml = pool.length ? pool.map(d=>`
+      <div class="pick-item" onclick="pickDishForSlot('${slot}','${d.id}')">${escapeHtml(d.name)}<div style="font-weight:400; font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${recencyLabel(d)}${d.cookTime?` · ⏱ ${d.cookTime} мин`:''}</div></div>
+    `).join('') : `<div class="placeholder-text">Нет подходящих блюд для «${SLOT_LABELS[slot]}». Добавьте блюдо в разделе «Блюда».</div>`;
+
+  const randomBtn = pool.length>1 ? `<button class="btn btn-ghost btn-full" style="margin-bottom:14px;" onclick="randomForSlot('${slot}','${excludeDishId||''}')">🎲 Предложи случайно</button>` : '';
+
+  showSheet(`Выбрать блюдо · ${SLOT_LABELS[slot]}`, `
+    ${extraSlotsHtml}
+    ${randomBtn}
+    ${listHtml}
+  `);
+}
+function pickDishForSlot(slot, dishId){
+  const extraEl = document.getElementById('picker-extra-slots');
+  const extra = extraEl ? Array.from(extraEl.querySelectorAll('.slot-toggle.active')).map(b=>b.dataset.slot) : [];
+  assignDishToSlots([slot, ...extra], dishId);
+}
+function randomForSlot(slot, excludeId){
+  const extraEl = document.getElementById('picker-extra-slots');
+  const extra = extraEl ? Array.from(extraEl.querySelectorAll('.slot-toggle.active')).map(b=>b.dataset.slot) : [];
+  assignRandom(slot, excludeId, extra);
+}
+function assignRandom(slot, excludeId, extraSlots){
+  const pool = state.dishes.filter(d => (d.mealType==='any' || d.mealType===slot) && d.id!==excludeId);
+  const finalPool = pool.length ? pool : state.dishes.filter(d => d.mealType==='any' || d.mealType===slot);
+  if(!finalPool.length) return;
+  // weighted random: longer since cooked = higher weight, but every dish keeps a real chance
+  const weights = finalPool.map(d=>{
+    const days = daysSinceCooked(d);
+    const capped = days===Infinity ? 400 : Math.min(days, 365);
+    return capped + 1;
+  });
+  const total = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random()*total;
+  let pick = finalPool[finalPool.length-1];
+  for(let i=0;i<finalPool.length;i++){
+    r -= weights[i];
+    if(r<=0){ pick = finalPool[i]; break; }
+  }
+  assignDishToSlots([slot, ...(extraSlots||[])], pick.id);
+}
+function assignDishToSlots(slots, dishId){
+  slots.forEach(s=>{ state.activeBatches[s] = { dishId, startDate: todayStr() }; });
+  save();
+  closeSheet();
+  render();
+}
+function clearBatch(slot){
+  state.activeBatches[slot] = null;
+  save();
+  render();
+}
+
+/* ============================= SHEET / MODAL SYSTEM ============================= */
+let pendingFinish = null;
+function showSheet(title, bodyHtml){
+  closeSheet();
+  const ov = document.createElement('div');
+  ov.className='overlay';
+  ov.id='sheet-overlay';
+  ov.onclick = (e)=>{ if(e.target===ov) closeSheet(); };
+  ov.innerHTML = `<div class="sheet"><button class="sheet-close" onclick="closeSheet()" aria-label="Закрыть">✕</button><h3>${title}</h3>${bodyHtml}</div>`;
+  document.body.appendChild(ov);
+  ov.querySelectorAll('textarea').forEach(t=>{
+    autoGrowTextarea(t);
+    t.addEventListener('input', ()=>autoGrowTextarea(t));
+  });
+}
+function autoGrowTextarea(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+function showConfirmSheet(title, text, buttons){
+  const btnHtml = buttons.map((b,i)=>`<button class="btn ${b.cls} btn-full" style="margin-bottom:8px;" onclick="window.__sheetBtn(${i})">${b.label}</button>`).join('');
+  window.__sheetBtn = (i)=> buttons[i].action();
+  showSheet(title, `<div class="confirm-box">${text}</div>${btnHtml}`);
+}
+function closeSheet(){
+  const ov = document.getElementById('sheet-overlay');
+  if(ov) ov.remove();
+}
+
+/* ============================= DISHES LIST ============================= */
+let dishSearchTerm = '';
+function screenDishes(){
+  const term = dishSearchTerm.trim().toLowerCase();
+  const list = rotationSort(state.dishes.filter(d=> !term || d.name.toLowerCase().includes(term)));
+
+  const searchBox = `
+    <div class="search-row">
+      <input type="text" placeholder="Поиск по названию…" value="${escapeAttr(dishSearchTerm)}" oninput="dishSearchTerm=this.value; renderDishListOnly();">
+    </div>`;
+
+  if(!state.dishes.length){
+    return searchBox + `
+      <div class="empty-state">
+        <div class="serif">Пока нет ни одного блюда</div>
+        <div>Добавьте первое блюдо, чтобы начать планировать готовку.</div>
+        <div style="margin-top:16px;"><button class="btn btn-primary" onclick="openDishEditor()">+ Добавить блюдо</button></div>
+      </div>`;
+  }
+
+  return searchBox + `<div id="dish-list-container">${dishListItemsHtml(list)}</div>`;
+}
+function dishListItemsHtml(list){
+  if(!list.length) return `<div class="empty-state"><div>Ничего не найдено.</div></div>`;
+  return list.map(d=>`
+    <div class="dish-item" onclick="openDish('${d.id}')">
+      <div class="dish-item-main">
+        <div class="dish-item-name">${escapeHtml(d.name)}</div>
+        <div class="dish-item-meta">
+          <span class="chip">${MEAL_LABELS[d.mealType]}</span>
+          ${d.cookTime ? `⏱ ${d.cookTime} мин · ` : ''}${recencyLabel(d)}
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+  `).join('');
+}
+function renderDishListOnly(){
+  const term = dishSearchTerm.trim().toLowerCase();
+  const list = rotationSort(state.dishes.filter(d=> !term || d.name.toLowerCase().includes(term)));
+  const el = document.getElementById('dish-list-container');
+  if(el) el.innerHTML = dishListItemsHtml(list);
+}
+function openDish(id){ push('dish', {id}); }
+
+/* ---- Dish editor (add/edit) ---- */
+function openDishEditor(id){
+  const dish = id ? getDish(id) : null;
+  const ingredients = dish ? dish.ingredients.slice() : [''];
+  window.__editIngredients = ingredients;
+
+  showSheet(dish ? 'Изменить блюдо' : 'Новое блюдо', `
+    <div class="field">
+      <label>Название</label>
+      <input id="f-name" type="text" value="${escapeAttr(dish?.name||'')}" placeholder="Например, картофельное пюре">
+    </div>
+    <div class="field">
+      <label>Приём пищи</label>
+      <select id="f-mealtype">
+        ${Object.entries(MEAL_LABELS).map(([k,v])=>`<option value="${k}" ${dish?.mealType===k?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Время готовки (мин, необязательно)</label>
+      <input id="f-cooktime" type="number" min="0" value="${dish?.cookTime||''}" placeholder="30">
+    </div>
+    <div class="field">
+      <label>Ингредиенты</label>
+      <div id="ingredient-rows">${ingredientRowsHtml(ingredients)}</div>
+      <button type="button" class="add-line-btn" onclick="addIngredientRow()">+ Добавить ингредиент</button>
+    </div>
+    <div class="field">
+      <label>О блюде (общая заметка, всегда на виду)</label>
+      <textarea id="f-about" placeholder="Общие мысли, любимый способ готовки, важное на будущее…">${escapeHtml(dish?.aboutNote||'')}</textarea>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveDish('${id||''}')">Сохранить</button>
+    ${dish ? `<button class="btn btn-danger btn-full" style="margin-top:8px;" onclick="deleteDish('${id}')">Удалить блюдо</button>` : ''}
+  `);
+}
+function ingredientRowsHtml(ingredients){
+  return ingredients.map((val,i)=>`
+    <div class="ingredient-row">
+      <input type="text" value="${escapeAttr(val)}" oninput="window.__editIngredients[${i}]=this.value">
+      <button type="button" class="remove-x" onclick="removeIngredientRow(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addIngredientRow(){
+  window.__editIngredients.push('');
+  document.getElementById('ingredient-rows').innerHTML = ingredientRowsHtml(window.__editIngredients);
+}
+function removeIngredientRow(i){
+  window.__editIngredients.splice(i,1);
+  if(!window.__editIngredients.length) window.__editIngredients.push('');
+  document.getElementById('ingredient-rows').innerHTML = ingredientRowsHtml(window.__editIngredients);
+}
+function saveDish(id){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){ alert('Введите название блюда.'); return; }
+  const mealType = document.getElementById('f-mealtype').value;
+  const cookTime = parseInt(document.getElementById('f-cooktime').value) || null;
+  const aboutNote = document.getElementById('f-about').value;
+  const ingredients = window.__editIngredients.map(s=>s.trim()).filter(Boolean);
+
+  if(id){
+    const dish = getDish(id);
+    Object.assign(dish, {name, mealType, cookTime, aboutNote, ingredients});
+  } else {
+    state.dishes.push({ id:uid(), name, mealType, cookTime, aboutNote, ingredients, history:[] });
+  }
+  save();
+  closeSheet();
+  render();
+}
+function deleteDish(id){
+  showConfirmSheet('Удалить блюдо?', 'Это удалит блюдо и всю историю заметок по нему. Действие необратимо.', [
+    { label:'Удалить', cls:'btn-danger', action:()=>{
+        state.dishes = state.dishes.filter(d=>d.id!==id);
+        SLOT_ORDER.forEach(s=>{ if(state.activeBatches[s]?.dishId===id) state.activeBatches[s]=null; });
+        save(); closeSheet(); goHome();
+      }},
+    { label:'Отмена', cls:'btn-outline', action:()=>closeSheet() }
+  ]);
+}
+
+/* ============================= DISH DETAIL ============================= */
+function screenDishDetail(id){
+  const dish = getDish(id);
+  if(!dish) return `<div class="empty-state">Блюдо не найдено.</div>`;
+  return `
+    <div class="dish-title">${escapeHtml(dish.name)}</div>
+    <div class="dish-tags">
+      <span class="chip">${MEAL_LABELS[dish.mealType]}</span>
+      ${dish.cookTime ? `<span class="chip">⏱ ${dish.cookTime} мин</span>` : ''}
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">О блюде</div>
+      ${dish.aboutNote ? `<div class="about-text">${escapeHtml(dish.aboutNote)}</div>` : `<div class="placeholder-text">Пока ничего не записано.</div>`}
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Ингредиенты</div>
+      ${dish.ingredients.length ? `<ul class="ingredient-list">${dish.ingredients.map(i=>`<li>${escapeHtml(i)}</li>`).join('')}</ul>` : `<div class="placeholder-text">Не указаны.</div>`}
+    </div>
+
+    <button class="btn btn-outline btn-full" onclick="push('history',{dishId:'${dish.id}'})">История попыток (${dish.history.length}) →</button>
+  `;
+}
+
+/* ============================= HISTORY LIST ============================= */
+function screenHistory(dishId){
+  const dish = getDish(dishId);
+  if(!dish) return `<div class="empty-state">Блюдо не найдено.</div>`;
+  const entries = dish.history.slice().sort((a,b)=>{
+    if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+    return b.date.localeCompare(a.date);
+  });
+  if(!entries.length){
+    return `<div class="empty-state">
+      <div class="serif">Записей пока нет</div>
+      <div>Добавьте первую заметку о том, как прошло приготовление «${escapeHtml(dish.name)}».</div>
+      <div style="margin-top:16px;"><button class="btn btn-primary" onclick="openNoteEditor('${dish.id}')">+ Добавить запись</button></div>
+    </div>`;
+  }
+  return entries.map(e=>{
+    const preview = e.freeText || e.whatWrong || e.whatDid || e.whatChange || '';
+    return `
+    <div class="history-entry ${e.pinned?'pinned':''}" onclick="push('note',{dishId:'${dish.id}', noteId:'${e.id}'})">
+      <div class="history-top">
+        <div class="history-date">${e.pinned?'<span class="pin-star">📌</span>':''}${formatShortDate(e.date)}</div>
+        ${e.rating ? `<div class="history-rating">${'★'.repeat(e.rating)}${'☆'.repeat(5-e.rating)}</div>` : ''}
+      </div>
+      <div class="history-preview">${escapeHtml(preview) || '<em>без описания</em>'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================= NOTE DETAIL ============================= */
+function screenNote(dishId, noteId){
+  const dish = getDish(dishId);
+  if(!dish) return `<div class="empty-state">Блюдо не найдено.</div>`;
+  const note = dish.history.find(h=>h.id===noteId);
+  if(!note) return `<div class="empty-state">Запись не найдена.</div>`;
+  return `
+    <div class="dish-title" style="font-size:20px;">${formatDateHuman(note.date)}</div>
+    ${note.pinned ? `<div class="chip" style="background:var(--mustard-tint); color:var(--mustard); margin-bottom:14px;">📌 Закреплено</div>` : ''}
+    ${note.rating ? `<div class="section-block"><div class="section-title">Оценка</div><div style="font-size:20px; color:var(--mustard);">${'★'.repeat(note.rating)}${'☆'.repeat(5-note.rating)}</div></div>` : ''}
+    ${noteFieldBlock('Что делал', note.whatDid)}
+    ${noteFieldBlock('Что пошло не так', note.whatWrong)}
+    ${noteFieldBlock('Что изменить в следующий раз', note.whatChange)}
+    ${noteFieldBlock('Свободные мысли', note.freeText)}
+    <button class="btn btn-danger btn-full" style="margin-top:10px;" onclick="deleteNote('${dishId}','${noteId}')">Удалить запись</button>
+  `;
+}
+function noteFieldBlock(title, text){
+  if(!text) return '';
+  return `<div class="section-block"><div class="section-title">${title}</div><div class="about-text">${escapeHtml(text)}</div></div>`;
+}
+function deleteNote(dishId, noteId){
+  showConfirmSheet('Удалить запись?', 'Это действие необратимо.', [
+    { label:'Удалить', cls:'btn-danger', action:()=>{
+        const dish = getDish(dishId);
+        dish.history = dish.history.filter(h=>h.id!==noteId);
+        save(); closeSheet(); pop();
+      }},
+    { label:'Отмена', cls:'btn-outline', action:()=>closeSheet() }
+  ]);
+}
+
+/* ---- Note editor ---- */
+function openNoteEditor(dishId, noteId, opts){
+  const dish = getDish(dishId);
+  const note = noteId ? dish.history.find(h=>h.id===noteId) : null;
+  showSheet(note ? 'Изменить запись' : 'Новая запись', `
+    <div class="field">
+      <label>Дата</label>
+      <input id="n-date" type="date" value="${note?.date || todayStr()}">
+    </div>
+    <div class="field">
+      <label>Оценка (необязательно)</label>
+      <select id="n-rating">
+        <option value="">Без оценки</option>
+        ${[1,2,3,4,5].map(n=>`<option value="${n}" ${note?.rating===n?'selected':''}>${'★'.repeat(n)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Что делал</label>
+      <textarea id="n-did" placeholder="Например: варил 20 минут, посолил в конце">${escapeHtml(note?.whatDid||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>Что пошло не так</label>
+      <textarea id="n-wrong" placeholder="Например: пюре получилось жидковатым">${escapeHtml(note?.whatWrong||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>Что изменить в следующий раз</label>
+      <textarea id="n-change" placeholder="Например: меньше молока, дольше томить">${escapeHtml(note?.whatChange||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>Свободные мысли</label>
+      <textarea id="n-free" placeholder="Всё остальное, что хочется записать">${escapeHtml(note?.freeText||'')}</textarea>
+    </div>
+    <div class="field" style="display:flex; align-items:center; gap:8px;">
+      <input type="checkbox" id="n-pin" style="width:auto;" ${note?.pinned?'checked':''}>
+      <label style="margin:0;" for="n-pin">Закрепить наверху истории</label>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveNote('${dishId}','${noteId||''}')">Сохранить</button>
+  `);
+  window.__noteAfterSave = opts?.afterSave || null;
+}
+function saveNote(dishId, noteId){
+  const dish = getDish(dishId);
+  const date = document.getElementById('n-date').value || todayStr();
+  const ratingVal = document.getElementById('n-rating').value;
+  const rating = ratingVal ? parseInt(ratingVal) : null;
+  const whatDid = document.getElementById('n-did').value.trim();
+  const whatWrong = document.getElementById('n-wrong').value.trim();
+  const whatChange = document.getElementById('n-change').value.trim();
+  const freeText = document.getElementById('n-free').value.trim();
+  const pinned = document.getElementById('n-pin').checked;
+
+  if(noteId){
+    const note = dish.history.find(h=>h.id===noteId);
+    Object.assign(note, {date, rating, whatDid, whatWrong, whatChange, freeText, pinned});
+  } else {
+    dish.history.push({ id:uid(), date, rating, whatDid, whatWrong, whatChange, freeText, pinned });
+  }
+  save();
+  closeSheet();
+  const cb = window.__noteAfterSave;
+  window.__noteAfterSave = null;
+  if(cb) cb(); else render();
+}
+
+/* ============================= CALENDAR ============================= */
+let calCursor = new Date();
+function screenCalendar(params){
+  const year = calCursor.getFullYear(), month = calCursor.getMonth();
+  const first = new Date(year, month, 1);
+  const startOffset = (first.getDay()+6)%7; // Monday=0
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const monthLabel = calCursor.toLocaleDateString('ru-RU',{month:'long', year:'numeric'});
+  const dows = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+  let cells = '';
+  for(let i=0;i<startOffset;i++) cells += `<div class="cal-day empty"></div>`;
+  for(let d=1; d<=daysInMonth; d++){
+    const dstr = dateStr(new Date(year,month,d));
+    const isToday = dstr === todayStr();
+    const hasPlan = !!state.calendarOverrides[dstr] && Object.keys(state.calendarOverrides[dstr]).length>0;
+    cells += `<div class="cal-day ${isToday?'today':''} ${hasPlan?'has-plan':''}" onclick="push('day',{date:'${dstr}'})">${d}</div>`;
+  }
+
+  return `
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="calCursor=new Date(${year},${month-1},1); render();">‹</button>
+      <div class="cal-month-label">${monthLabel}</div>
+      <button class="cal-nav-btn" onclick="calCursor=new Date(${year},${month+1},1); render();">›</button>
+    </div>
+    <div class="cal-grid">
+      ${dows.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="hint" style="margin-top:14px;">Точка на дне — на эту дату запланировано конкретное блюдо, которое заменит текущую партию.</div>
+  `;
+}
+
+function screenDay(dstr){
+  const overrides = state.calendarOverrides[dstr] || {};
+  return `
+    <div class="date-line" style="margin-bottom:16px;">${formatDateHuman(dstr)}</div>
+    ${SLOT_ORDER.map(slot=>{
+      const dishId = overrides[slot];
+      const dish = dishId ? getDish(dishId) : null;
+      return `
+        <div class="day-slot-block">
+          <div class="day-slot-title">${SLOT_LABELS[slot]}</div>
+          ${dish ? `
+            <div class="slot-dish-name" style="font-size:17px; margin-bottom:10px;">${escapeHtml(dish.name)}</div>
+            <div class="btn-row">
+              <button class="btn btn-outline btn-sm" onclick="openDayPicker('${dstr}','${slot}')">Изменить</button>
+              <button class="btn btn-danger btn-sm" onclick="clearDayOverride('${dstr}','${slot}')">Убрать план</button>
+            </div>
+          ` : `
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm" onclick="openDayPicker('${dstr}','${slot}')">Запланировать блюдо</button>
+            </div>
+          `}
+        </div>`;
+    }).join('')}
+  `;
+}
+function openDayPicker(dstr, slot){
+  const pool = rotationSort(state.dishes.filter(d => d.mealType==='any' || d.mealType===slot));
+  const listHtml = pool.length ? pool.map(d=>`
+      <div class="pick-item" onclick="setDayOverride('${dstr}','${slot}','${d.id}')">${escapeHtml(d.name)}<div style="font-weight:400; font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${recencyLabel(d)}</div></div>
+    `).join('') : `<div class="placeholder-text">Нет подходящих блюд для «${SLOT_LABELS[slot]}».</div>`;
+  showSheet(`${SLOT_LABELS[slot]} · ${formatShortDate(dstr)}`, listHtml);
+}
+function setDayOverride(dstr, slot, dishId){
+  if(!state.calendarOverrides[dstr]) state.calendarOverrides[dstr] = {};
+  state.calendarOverrides[dstr][slot] = dishId;
+  save(); closeSheet(); replace('day',{date:dstr});
+}
+function clearDayOverride(dstr, slot){
+  if(state.calendarOverrides[dstr]){
+    delete state.calendarOverrides[dstr][slot];
+    if(!Object.keys(state.calendarOverrides[dstr]).length) delete state.calendarOverrides[dstr];
+  }
+  save(); render();
+}
+
+/* ============================= SHOPPING LIST ============================= */
+function screenShopping(){
+  const items = state.shoppingList;
+  const list = items.length ? items.map(it=>`
+    <div class="shop-item ${it.checked?'checked':''}">
+      <input type="checkbox" ${it.checked?'checked':''} onchange="toggleShopItem('${it.id}')">
+      <div class="shop-text">${escapeHtml(it.text)}</div>
+      <button class="shop-del" onclick="removeShopItem('${it.id}')" aria-label="Удалить">✕</button>
+    </div>
+  `).join('') : `<div class="empty-state"><div>Список пуст. Соберите его из текущих блюд или добавьте вручную.</div></div>`;
+
+  return `
+    <button class="btn btn-ghost btn-full" onclick="refreshShoppingFromActive()">Обновить из текущих блюд</button>
+    <div class="shop-add-row">
+      <input id="shop-new-item" type="text" placeholder="Добавить вручную…" onkeydown="if(event.key==='Enter') addManualShopItem()">
+      <button class="btn btn-primary" onclick="addManualShopItem()">+</button>
+    </div>
+    ${list}
+    ${items.some(i=>i.checked) ? `<button class="btn btn-outline btn-full" style="margin-top:10px;" onclick="clearCheckedShopItems()">Убрать купленное</button>` : ''}
+  `;
+}
+function refreshShoppingFromActive(){
+  const activeDishes = [];
+  SLOT_ORDER.forEach(slot=>{
+    const dstr = todayStr();
+    const overrideId = state.calendarOverrides[dstr]?.[slot];
+    const batchId = state.activeBatches[slot]?.dishId;
+    const id = overrideId || batchId;
+    if(id){ const d = getDish(id); if(d) activeDishes.push(d); }
+  });
+  const existingTexts = new Set(state.shoppingList.map(i=>i.text.toLowerCase()));
+  let added = 0;
+  activeDishes.forEach(dish=>{
+    dish.ingredients.forEach(ing=>{
+      if(!existingTexts.has(ing.toLowerCase())){
+        state.shoppingList.push({ id:uid(), text:ing, checked:false, source:'auto', dishId:dish.id });
+        existingTexts.add(ing.toLowerCase());
+        added++;
+      }
+    });
+  });
+  save(); render();
+  if(added===0 && activeDishes.length===0){
+    showSheet('Нет активных блюд', `<div class="placeholder-text">Сначала выберите блюда на сегодня, чтобы собрать из них список покупок.</div>`);
+  }
+}
+function addManualShopItem(){
+  const input = document.getElementById('shop-new-item');
+  const text = input.value.trim();
+  if(!text) return;
+  state.shoppingList.push({ id:uid(), text, checked:false, source:'manual' });
+  input.value='';
+  save(); render();
+}
+function toggleShopItem(id){
+  const it = state.shoppingList.find(i=>i.id===id);
+  if(it){ it.checked = !it.checked; save(); render(); }
+}
+function removeShopItem(id){
+  state.shoppingList = state.shoppingList.filter(i=>i.id!==id);
+  save(); render();
+}
+function clearCheckedShopItems(){
+  state.shoppingList = state.shoppingList.filter(i=>!i.checked);
+  save(); render();
+}
+
+/* ============================= EXPORT REMINDER ============================= */
+const BACKUP_META_KEY = 'kitchenApp_backupMeta';
+function loadBackupMeta(){
+  try{ return JSON.parse(localStorage.getItem(BACKUP_META_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveBackupMeta(m){ localStorage.setItem(BACKUP_META_KEY, JSON.stringify(m)); }
+function daysBetweenDates(a,b){
+  const [y1,m1,d1]=a.split('-').map(Number), [y2,m2,d2]=b.split('-').map(Number);
+  return Math.round((new Date(y2,m2-1,d2) - new Date(y1,m1-1,d1))/(1000*60*60*24));
+}
+function addDaysToDateStr(dstr, n){
+  const [y,m,d]=dstr.split('-').map(Number);
+  const dt = new Date(y,m-1,d); dt.setDate(dt.getDate()+n);
+  return dateStr(dt);
+}
+function hasRecentCloudBackup(){
+  const cfg = loadGistConfig();
+  if(!cfg.lastBackup) return false;
+  const days = Math.round((Date.now() - new Date(cfg.lastBackup).getTime())/(1000*60*60*24));
+  return days <= 7;
+}
+function shouldShowExportReminder(){
+  if(hasRecentCloudBackup()) return false; // already has a fresh off-device copy via Gist
+  const meta = loadBackupMeta();
+  const today = todayStr();
+  if(meta.snoozeUntil && meta.snoozeUntil > today) return false;
+  if(!meta.lastExportDate) return true;
+  return daysBetweenDates(meta.lastExportDate, today) >= 7;
+}
+function snoozeExportReminder(){
+  const meta = loadBackupMeta();
+  meta.snoozeUntil = addDaysToDateStr(todayStr(), 3);
+  saveBackupMeta(meta);
+  render();
+}
+function exportReminderBanner(){
+  if(!shouldShowExportReminder()) return '';
+  const meta = loadBackupMeta();
+  const lastText = meta.lastExportDate ? `Последний раз скачивали ${formatShortDate(meta.lastExportDate)}.` : 'Вы ещё ни разу не скачивали бэкап.';
+  return `
+    <div class="section-block" style="border-color:var(--mustard); background:var(--mustard-tint);">
+      <div style="font-weight:700; margin-bottom:4px;">💾 Пора сохранить бэкап</div>
+      <div style="font-size:13.5px; color:var(--ink-soft); margin-bottom:10px;">${lastText} Скачайте файл и закиньте в Google Drive (или другое облако) — так данные переживут сброс телефона.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="exportData()">Скачать .json</button>
+        <button class="btn btn-outline btn-sm" onclick="snoozeExportReminder()">Напомнить через 3 дня</button>
+      </div>
+    </div>`;
+}
+
+/* ============================= GITHUB GIST BACKUP ============================= */
+// Token/gist id live in their own localStorage key, NOT inside state,
+// so they never get bundled into a regular .json export/import.
+const GIST_CFG_KEY = 'kitchenApp_gistConfig';
+function loadGistConfig(){
+  try{ return JSON.parse(localStorage.getItem(GIST_CFG_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveGistConfig(cfg){ localStorage.setItem(GIST_CFG_KEY, JSON.stringify(cfg)); }
+
+async function gistRequest(method, path, body){
+  const cfg = loadGistConfig();
+  const headers = { 'Authorization': 'Bearer ' + cfg.token, 'Accept':'application/vnd.github+json' };
+  if(body) headers['Content-Type'] = 'application/json';
+  const res = await fetch('https://api.github.com'+path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  if(!res.ok){
+    const t = await res.text().catch(()=> '');
+    throw new Error(`${res.status}: ${t.slice(0,160)}`);
+  }
+  return res.json();
+}
+
+function saveGistToken(){
+  const token = document.getElementById('gist-token-input').value.trim();
+  if(!token) return;
+  const cfg = loadGistConfig();
+  cfg.token = token;
+  delete cfg.gistId; // unknown on this device until a restore looks it up
+  saveGistConfig(cfg);
+  render();
+}
+// Finds the existing backup gist on this GitHub account, if any, and caches its id locally.
+async function locateExistingGist(cfg){
+  const list = await gistRequest('GET', '/gists');
+  const match = list.find(g => g.files && g.files['kitchen-app-backup.json']);
+  if(match){
+    cfg.gistId = match.id;
+    cfg.lastBackup = match.updated_at || cfg.lastBackup;
+    saveGistConfig(cfg);
+  }
+  return match ? match.id : null;
+}
+function clearGistToken(){
+  showConfirmSheet('Удалить токен?', 'Это не удалит сам бэкап на GitHub, только отвяжет приложение от него на этом устройстве.', [
+    { label:'Удалить', cls:'btn-danger', action:()=>{ localStorage.removeItem(GIST_CFG_KEY); closeSheet(); render(); } },
+    { label:'Отмена', cls:'btn-outline', action:()=>closeSheet() }
+  ]);
+}
+async function doGistBackup(){
+  const cfg = loadGistConfig();
+  if(!cfg.token){ return; }
+  const content = JSON.stringify(state, null, 2);
+  try{
+    if(cfg.gistId){
+      await gistRequest('PATCH', '/gists/'+cfg.gistId, { files: { 'kitchen-app-backup.json': { content } } });
+    } else {
+      const created = await gistRequest('POST', '/gists', { description:'Kitchen App — бэкап данных', public:false, files: { 'kitchen-app-backup.json': { content } } });
+      cfg.gistId = created.id;
+    }
+    cfg.lastBackup = new Date().toISOString();
+    saveGistConfig(cfg);
+    render();
+  }catch(e){
+    showSheet('Не удалось сохранить бэкап', `<div class="confirm-box">${escapeHtml(e.message)}</div><div class="hint">Проверьте, что токен верный и у него есть право «gist».</div>`);
+  }
+}
+async function doGistRestore(){
+  const cfg = loadGistConfig();
+  if(!cfg.token) return;
+  showSheet('Восстановление', `<div class="confirm-box">Ищем бэкап на GitHub…</div>`);
+  try{
+    let gistId = cfg.gistId;
+    if(!gistId) gistId = await locateExistingGist(cfg);
+    if(!gistId){
+      showSheet('Бэкапа нет', `<div class="confirm-box">На этом GitHub-аккаунте пока нет сохранённого бэкапа. Сначала нажмите «Сделать бэкап сейчас» на устройстве с актуальными данными.</div>`);
+      return;
+    }
+    const data = await gistRequest('GET', '/gists/'+gistId);
+    const file = data.files && data.files['kitchen-app-backup.json'];
+    if(!file) throw new Error('Файл бэкапа не найден в этом Gist');
+    const parsed = JSON.parse(file.content);
+    showConfirmSheet('Восстановить данные из Gist?', 'Это заменит текущие данные в приложении содержимым облачного бэкапа. Действие необратимо.', [
+      { label:'Восстановить', cls:'btn-danger', action:()=>{
+          state = Object.assign(defaultState(), parsed);
+          save(); closeSheet(); goHome();
+        }},
+      { label:'Отмена', cls:'btn-outline', action:()=>closeSheet() }
+    ]);
+  }catch(e){
+    showSheet('Не удалось восстановить', `<div class="confirm-box">${escapeHtml(e.message)}</div>`);
+  }
+}
+
+/* ============================= SETTINGS / EXPORT-IMPORT ============================= */
+function screenSettings(){
+  return `
+    <div class="section-block">
+      <div class="section-title">Приёмы пищи по умолчанию</div>
+      <div class="hint">Эти слоты будут активны каждый день, если вы не поменяли их вручную на главном экране.</div>
+      <div class="slot-toggle-row">
+        ${SLOT_ORDER.map(s=>`
+          <button class="slot-toggle ${state.settings.activeSlots.includes(s)?'active':''}" onclick="toggleDefaultSlot('${s}')">${SLOT_LABELS[s]}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Данные</div>
+      <div class="settings-row">
+        <div>Экспорт данных в файл</div>
+        <button class="btn btn-outline btn-sm" onclick="exportData()">Скачать .json</button>
+      </div>
+      <div class="settings-row">
+        <div>Импорт данных из файла</div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file-input').click()">Загрузить</button>
+      </div>
+      <input type="file" id="import-file-input" accept="application/json" onchange="importData(this.files[0])">
+      <div class="hint" style="margin-top:10px;">Экспорт сохраняет все блюда, историю, планы и список покупок в один файл — удобно перенести на другое устройство.</div>
+    </div>
+
+    ${gistSettingsBlock()}
+
+    <div class="hint" id="persist-status" style="text-align:center; margin-top:4px;"></div>
+  `;
+}
+function gistSettingsBlock(){
+  const cfg = loadGistConfig();
+  if(!cfg.token){
+    return `
+    <div class="section-block">
+      <div class="section-title">Облачный бэкап (GitHub Gist)</div>
+      <div class="hint">Бесплатно, через твой GitHub-аккаунт — полезно на случай сброса телефона. Токену нужно только право «gist».</div>
+      <div class="field">
+        <label>Personal Access Token</label>
+        <input id="gist-token-input" type="password" placeholder="ghp_…">
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveGistToken()">Сохранить токен</button>
+      <div class="hint" style="margin-top:10px;"><a href="https://github.com/settings/tokens/new?scopes=gist&description=Kitchen%20App%20Backup" target="_blank" rel="noopener">Создать токен на GitHub →</a></div>
+    </div>`;
+  }
+  const lastBackupText = cfg.lastBackup
+    ? `Последний бэкап: ${new Date(cfg.lastBackup).toLocaleString('ru-RU')}`
+    : 'На этом устройстве ещё не делали бэкап и не проверяли, есть ли он на аккаунте.';
+
+  return `
+    <div class="section-block">
+      <div class="section-title">Облачный бэкап (GitHub Gist)</div>
+      <div class="settings-row">
+        <div>Токен сохранён</div>
+        <button class="btn btn-outline btn-sm" onclick="clearGistToken()">Удалить</button>
+      </div>
+      <div class="hint">${lastBackupText}</div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-primary btn-sm" onclick="doGistBackup()">Сделать бэкап сейчас</button>
+        <button class="btn btn-outline btn-sm" onclick="doGistRestore()">Восстановить из бэкапа</button>
+      </div>
+    </div>`;
+}
+function toggleDefaultSlot(slot){
+  const arr = state.settings.activeSlots;
+  const idx = arr.indexOf(slot);
+  if(idx>=0) arr.splice(idx,1); else arr.push(slot);
+  save(); render();
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kitchen-app-${todayStr()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  const meta = loadBackupMeta();
+  meta.lastExportDate = todayStr();
+  meta.snoozeUntil = null;
+  saveBackupMeta(meta);
+  render();
+}
+function importData(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      const parsed = JSON.parse(e.target.result);
+      showConfirmSheet('Заменить все данные?', 'Импорт полностью заменит текущие блюда, историю и планы содержимым файла. Это необратимо.', [
+        { label:'Заменить', cls:'btn-danger', action:()=>{
+            state = Object.assign(defaultState(), parsed);
+            save(); closeSheet(); goHome();
+          }},
+        { label:'Отмена', cls:'btn-outline', action:()=>closeSheet() }
+      ]);
+    }catch(err){
+      alert('Не удалось прочитать файл. Убедитесь, что это корректный экспорт из этого приложения.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ============================= UTIL ============================= */
+function escapeHtml(str){
+  if(str===undefined || str===null) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+function attachScreenHandlers(){ /* reserved for future per-screen listeners */ }
+
+/* ============================= PERSISTENT STORAGE ============================= */
+// Ask the browser not to auto-evict this site's storage under pressure.
+// Not a guarantee (and no defence against a full phone reset), but a free, harmless safety net.
+if(navigator.storage && navigator.storage.persist){
+  navigator.storage.persist().catch(()=>{});
+}
+function updatePersistStatus(){
+  const el = document.getElementById('persist-status');
+  if(!el || !navigator.storage || !navigator.storage.persisted){ if(el) el.textContent=''; return; }
+  navigator.storage.persisted().then(granted=>{
+    const el2 = document.getElementById('persist-status');
+    if(el2) el2.textContent = granted
+      ? '🛡 Браузер пометил хранилище как защищённое от автоочистки.'
+      : 'Хранилище пока не защищено — откройте приложение ещё пару раз, браузер обычно даёт защиту со временем.';
+  }).catch(()=>{});
+}
+
+/* ============================= INIT ============================= */
+render();
+</script>
+</body>
+</html>
